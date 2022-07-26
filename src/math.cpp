@@ -5,6 +5,7 @@
 
 #include <bx/math.h>
 #include <bx/uint32_t.h>
+#include <cmath>
 
 namespace bx
 {
@@ -28,45 +29,46 @@ namespace bx
 
 	BX_CONST_FUNC float cos(float _a)
 	{
-		const float scaled = _a * 2.0f*kInvPi;
-		const float real   = floor(scaled);
-		const float xx     = _a - real * kPiHalf;
-		const int32_t bits = int32_t(real) & 3;
-
-		float c0, c2, c4, c6, c8, c10;
-
-		if (bits == 0
-		||  bits == 2)
-		{
-			c0  = 1.0f;
-			c2  = kCosC2;
-			c4  = kCosC4;
-			c6  = kCosC6;
-			c8  = kCosC8;
-			c10 = kCosC10;
-		}
-		else
-		{
-			c0  = xx;
-			c2  = kSinC2;
-			c4  = kSinC4;
-			c6  = kSinC6;
-			c8  = kSinC8;
-			c10 = kSinC10;
-		}
-
-		const float xsq    = square(xx);
-		const float tmp0   = mad(c10,  xsq, c8 );
-		const float tmp1   = mad(tmp0, xsq, c6 );
-		const float tmp2   = mad(tmp1, xsq, c4 );
-		const float tmp3   = mad(tmp2, xsq, c2 );
-		const float tmp4   = mad(tmp3, xsq, 1.0);
-		const float result = tmp4 * c0;
-
-		return bits == 1 || bits == 2
-			? -result
-			:  result
-			;
+//		const float scaled = _a * 2.0f*kInvPi;
+//		const float real   = floor(scaled);
+//		const float xx     = _a - real * kPiHalf;
+//		const int32_t bits = int32_t(real) & 3;
+//
+//		float c0, c2, c4, c6, c8, c10;
+//
+//		if (bits == 0
+//		||  bits == 2)
+//		{
+//			c0  = 1.0f;
+//			c2  = kCosC2;
+//			c4  = kCosC4;
+//			c6  = kCosC6;
+//			c8  = kCosC8;
+//			c10 = kCosC10;
+//		}
+//		else
+//		{
+//			c0  = xx;
+//			c2  = kSinC2;
+//			c4  = kSinC4;
+//			c6  = kSinC6;
+//			c8  = kSinC8;
+//			c10 = kSinC10;
+//		}
+//
+//		const float xsq    = square(xx);
+//		const float tmp0   = mad(c10,  xsq, c8 );
+//		const float tmp1   = mad(tmp0, xsq, c6 );
+//		const float tmp2   = mad(tmp1, xsq, c4 );
+//		const float tmp3   = mad(tmp2, xsq, c2 );
+//		const float tmp4   = mad(tmp3, xsq, 1.0);
+//		const float result = tmp4 * c0;
+//
+//		return bits == 1 || bits == 2
+//			? -result
+//			:  result
+//			;
+        return std::cosf(_a);
 	}
 
 	namespace
@@ -80,16 +82,17 @@ namespace bx
 
 	BX_CONST_FUNC float acos(float _a)
 	{
-		const float absa   = abs(_a);
-		const float tmp0   = mad(kAcosC3, absa, kAcosC2);
-		const float tmp1   = mad(tmp0,    absa, kAcosC1);
-		const float tmp2   = mad(tmp1,    absa, kAcosC0);
-		const float tmp3   = tmp2 * sqrt(1.0f - absa);
-		const float negate = float(_a < 0.0f);
-		const float tmp4   = tmp3 - 2.0f*negate*tmp3;
-		const float result = negate*kPi + tmp4;
-
-		return result;
+//		const float absa   = abs(_a);
+//		const float tmp0   = mad(kAcosC3, absa, kAcosC2);
+//		const float tmp1   = mad(tmp0,    absa, kAcosC1);
+//		const float tmp2   = mad(tmp1,    absa, kAcosC0);
+//		const float tmp3   = tmp2 * sqrt(1.0f - absa);
+//		const float negate = float(_a < 0.0f);
+//		const float tmp4   = tmp3 - 2.0f*negate*tmp3;
+//		const float result = negate*kPi + tmp4;
+//
+//		return result;
+        return std::acosf(_a);
 	}
 
 	namespace
@@ -105,29 +108,31 @@ namespace bx
 
 	BX_CONST_FUNC float atan2(float _y, float _x)
 	{
-		const float ax     = abs(_x);
-		const float ay     = abs(_y);
-		const float maxaxy = max(ax, ay);
-		const float minaxy = min(ax, ay);
-
-		if (maxaxy == 0.0f)
-		{
-			return 0.0f*sign(_y);
-		}
-
-		const float mxy    = minaxy / maxaxy;
-		const float mxysq  = square(mxy);
-		const float tmp0   = mad(kAtan2C0, mxysq, kAtan2C1);
-		const float tmp1   = mad(tmp0,     mxysq, kAtan2C2);
-		const float tmp2   = mad(tmp1,     mxysq, kAtan2C3);
-		const float tmp3   = mad(tmp2,     mxysq, kAtan2C4);
-		const float tmp4   = mad(tmp3,     mxysq, kAtan2C5);
-		const float tmp5   = tmp4 * mxy;
-		const float tmp6   = ay > ax   ? kPiHalf - tmp5 : tmp5;
-		const float tmp7   = _x < 0.0f ? kPi     - tmp6 : tmp6;
-		const float result = sign(_y)*tmp7;
-
-		return result;
+//		const float ax     = abs(_x);
+//		const float ay     = abs(_y);
+//		const float maxaxy = max(ax, ay);
+//		const float minaxy = min(ax, ay);
+//
+//		if (maxaxy == 0.0f)
+//		{
+//			return 0.0f*sign(_y);
+//		}
+//
+//		const float mxy    = minaxy / maxaxy;
+//		const float mxysq  = square(mxy);
+//		const float tmp0   = mad(kAtan2C0, mxysq, kAtan2C1);
+//		const float tmp1   = mad(tmp0,     mxysq, kAtan2C2);
+//		const float tmp2   = mad(tmp1,     mxysq, kAtan2C3);
+//		const float tmp3   = mad(tmp2,     mxysq, kAtan2C4);
+//		const float tmp4   = mad(tmp3,     mxysq, kAtan2C5);
+//		const float tmp5   = tmp4 * mxy;
+//		const float tmp6   = ay > ax   ? kPiHalf - tmp5 : tmp5;
+//		const float tmp7   = _x < 0.0f ? kPi     - tmp6 : tmp6;
+//		const float result = sign(_y)*tmp7;
+//
+//		return result;
+        
+        return std::atan2f(_y, _x);
 	}
 
 	BX_CONST_FUNC float ldexp(float _a, int32_t _b)
