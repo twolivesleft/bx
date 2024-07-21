@@ -188,7 +188,8 @@
 #	undef  BX_PLATFORM_LINUX
 #	define BX_PLATFORM_LINUX 1
 #elif  defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) \
-	|| defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__)
+	|| defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__) \
+	|| defined(__has_builtin) && __has_builtin(__is_target_os) && __is_target_os(xros)
 #	undef  BX_PLATFORM_IOS
 #	define BX_PLATFORM_IOS 1
 #elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__)
