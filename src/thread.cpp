@@ -61,7 +61,8 @@ namespace bx
 		static DWORD WINAPI threadFunc(LPVOID _arg);
 		HANDLE m_handle;
 		DWORD  m_threadId;
-#elif BX_PLATFORM_POSIX
+#elif BX_PLATFORM_POSIX \
+	|| BX_PLATFORM_IOS
 		static void* threadFunc(void* _arg);
 		pthread_t m_handle;
 #endif // BX_PLATFORM_
