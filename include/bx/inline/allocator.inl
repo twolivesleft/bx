@@ -61,7 +61,6 @@ namespace bx
 	inline void alignedFree(AllocatorI* _allocator, void* _ptr, size_t _align, const Location& _location)
 	{
 		BX_UNUSED(_align);
-		if (NULL == _ptr) return;
 		uint8_t* aligned = (uint8_t*)_ptr;
 		uint32_t* header = (uint32_t*)aligned - 1;
 		uint8_t* ptr = aligned - *header;
