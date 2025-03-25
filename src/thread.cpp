@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2025 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -84,13 +84,8 @@ namespace bx
 	void* ThreadInternal::threadFunc(void* _arg)
 	{
 		Thread* thread = (Thread*)_arg;
-		union
-		{
-			void* ptr;
-			int32_t i;
-		} cast;
-		cast.i = thread->entry();
-		return cast.ptr;
+		intptr_t result = thread->entry();
+		return bitCast<void*>(result);
 	}
 #endif // BX_PLATFORM_
 
@@ -102,7 +97,7 @@ namespace bx
 		, m_exitCode(kExitSuccess)
 		, m_running(false)
 	{
-		BX_STATIC_ASSERT(sizeof(ThreadInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(ThreadInternal) <= sizeof(m_internal) );
 
 		ThreadInternal* ti = (ThreadInternal*)m_internal;
 #if BX_CRT_NONE
@@ -220,13 +215,9 @@ namespace bx
 		CloseHandle(ti->m_handle);
 		ti->m_handle = INVALID_HANDLE_VALUE;
 #elif BX_PLATFORM_POSIX
-		union
-		{
-			void* ptr;
-			int32_t i;
-		} cast;
-		pthread_join(ti->m_handle, &cast.ptr);
-		m_exitCode = cast.i;
+		void* ptr;
+		pthread_join(ti->m_handle, &ptr);
+		m_exitCode = narrowCast<int32_t>(bitCast<intptr_t>(ptr) );
 		ti->m_handle = 0;
 #endif // BX_PLATFORM_
 
@@ -266,7 +257,7 @@ namespace bx
 		{
 			uint32_t length = (uint32_t)strLen(_name)+1;
 			uint32_t size = length*sizeof(wchar_t);
-			wchar_t* name = (wchar_t*)alloca(size);
+			wchar_t* name = (wchar_t*)BX_STACK_ALLOC(size);
 			mbstowcs(name, _name, size-2);
 			SetThreadDescription(ti->m_handle, name);
 		}
@@ -340,7 +331,7 @@ namespace bx
 #if BX_CRT_NONE
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		BX_UNUSED(ti);
@@ -367,7 +358,7 @@ namespace bx
 #elif BX_PLATFORM_WINDOWS
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		ti->m_id = TlsAlloc();
@@ -397,7 +388,7 @@ namespace bx
 
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		int result = pthread_key_create(&ti->m_id, NULL);
