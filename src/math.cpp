@@ -5,7 +5,6 @@
 
 #include <bx/math.h>
 #include <bx/uint32_t.h>
-#include <cmath>
 
 #include <bx/string.h>
 
